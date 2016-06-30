@@ -34,27 +34,27 @@ Prior to running the project you must have the destination configured as describ
 The HTTP API Destination should look like this:
 
 
-	Name=ariba-p2p-api<br>
-	Description=Ariba P2P SOAP WS API Destination<br>
-	Type=HTTP<br>
-	URL=https\://<ariba host>/Buyer/soap/salesdemo/RequisitionImportPull?wsdl<br>
-	User=<endpoint-user><br>
-	Password=<endpoint-password><br>
-	Authentication=BasicAuthentication<br>
-	ProxyType=Internet<br>
-	TrustAll=true<br>
-	CloudConnectorVersion=2<br>
-	deliverTo=<deliver to name><br>
-	headerUniqueName=<header><br>
-	shipTo=<shipping address><br>
-	billingAddress=<billing address><br>
-	currency=<default currency><br>
-	originatingSystem=<originating system><br>
-	passwordAdapter=PasswordAdapter1<br>
-	preparer=<preparer user><br>
-	originatingSystemId=<system id><br>
-	businessUnit=<business unit><br>
-	commodityCode=<standard commodity code><br>
+	Name=ariba-p2p-api
+	Description=Ariba P2P SOAP WS API Destination
+	Type=HTTP
+	URL=https\://<ariba host>/Buyer/soap/salesdemo/RequisitionImportPull?wsdl
+	User=<endpoint-user>
+	Password=<endpoint-password>
+	Authentication=BasicAuthentication
+	ProxyType=Internet
+	TrustAll=true
+	CloudConnectorVersion=2
+	deliverTo=<deliver to name>
+	headerUniqueName=<header>
+	shipTo=<shipping address>
+	billingAddress=<billing address>
+	currency=<default currency>
+	originatingSystem=<originating system>
+	passwordAdapter=PasswordAdapter1
+	preparer=<preparer user>
+	originatingSystemId=<system id>
+	businessUnit=<business unit>
+	commodityCode=<standard commodity code>
 
 
 ## Accessing the application
