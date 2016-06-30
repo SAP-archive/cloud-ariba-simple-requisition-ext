@@ -1,0 +1,43 @@
+{
+  "welcomeFile": "index.html",
+  "authenticationMethod": "saml",
+  "routes": [
+    {
+      "path": "/resources",
+      "target": {
+        "type": "service",
+        "name": "sapui5",
+        "entryPath": "/resources"
+      },
+      "description": " SAPUI5 Resources"
+    },
+    {
+      "path": "/destinations/hcp_ariba_p2p_odatasvc",
+      "target": {
+        "type": "destination",
+        "name": "3rd_party_sample_payroll"
+      },
+      "description": "HCP OData Service for Ariba P2P Requisitions"
+    },
+    {
+      "path": "/test-resources",
+      "target": {
+        "type": "service",
+        "name": "sapui5",
+        "entryPath": "/test-resources"
+      },
+      "description": "SAPUI5 Test Resources"
+    }
+  ],
+  "cacheControl": [
+    {
+      "directive": "private",
+      "maxAge": 0,
+      "path": "*html"
+    },
+    {
+      "directive": "public",
+      "maxAge": 31536000
+    }
+  ]
+}

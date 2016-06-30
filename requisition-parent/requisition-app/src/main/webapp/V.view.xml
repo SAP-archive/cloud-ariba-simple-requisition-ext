@@ -1,0 +1,48 @@
+<mvc:View
+		height="100%"
+		controllerName="sap.ui.ariba.p2p.requisitions.wizard.C"
+		xmlns:l="sap.ui.layout"
+		xmlns:f="sap.ui.layout.form"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m" id="wizard">
+	<Page showHeader="false">
+		<content>
+			<f:SimpleForm
+					maxContainerCols="2"
+					editable="false"
+					layout="ResponsiveGridLayout"
+					labelSpanL="3"
+					labelSpanM="3"
+					emptySpanL="4"
+					emptySpanM="4"
+					columnsL="1"
+					columnsM="1">
+				<f:content>
+					<Label text="Requester"/>
+					<Text text="{/RequisitionHeader/Requester}"/>
+					<Label text="Name"/>
+					<Text text="{/RequisitionHeader/Name}"/>
+					<Label text="Description"/>
+					<Text text="{/RequisitionHeader/Comment}"/>
+				</f:content>
+			</f:SimpleForm>				
+			<TileContainer height="320px" tiles="{/Tiles}">
+				<StandardTile
+					icon="sap-icon://{icon}"
+					number="{number}"
+					numberUnit="{numberUnit}"
+					title="{title}" 
+					info="{info}"
+					press="onPressTile"/>
+			</TileContainer>
+		</content>
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Button id="submitButton" text="Submit" press="onSubmit" type="Accept" visible="false"/>
+				<Button id="cancelButton" text="Cancel" press="onCancel" type="Reject" visible="false"/>
+			</Toolbar>
+		</footer>
+	</Page>
+</mvc:View>

@@ -1,0 +1,52 @@
+{
+    "Tiles": [
+        {
+            "icon": "display",
+            "number": 0,
+            "numberUnit": "EA",
+            "title": "Protective Goggles Smoke/Yellow/Clear",
+            "info": "SHLDMRX",
+            "CommodityCode": "40141606",
+            "Price": 47.00,
+            "Currency": "USD",
+            "SupplierPartNumber": "28AC91",
+            "Supplier": "did491"
+        },
+        {
+            "icon": "eam-work-order",
+            "number": 0,
+            "numberUnit": "EA",
+            "title": "Work and Rescue Helmet White",
+            "info": "A10BWE",
+            "CommodityCode": "40141606",
+            "Price": 246.50,
+            "Currency": "USD",
+            "SupplierPartNumber": "33C604",
+            "Supplier": "did491"
+        },
+        {
+            "icon": "decision",
+            "number": 0,
+            "numberUnit": "EA",
+            "title": "D1573 Leather Gloves Split/Double L PR",
+            "info": "2AH54",
+            "CommodityCode": "40141606",
+            "Price": 2.10,
+            "Currency": "USD",
+            "SupplierPartNumber": "2AH54",
+            "Supplier": "did491"
+        },
+        {
+          	"icon": "heating-cooling",
+            "number": 0,
+            "numberUnit": "EA",
+            "title": "F2788 Work Boots Pln Mens 10 Brown 1PR",
+            "info": "G6274010M",
+            "CommodityCode": "40141606",
+            "Price": 103.70,
+            "Currency": "USD",
+            "SupplierPartNumber": "8CX14",
+            "Supplier": "did491"
+        }
+    ]
+}

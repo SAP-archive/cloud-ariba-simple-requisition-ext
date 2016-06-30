@@ -1,0 +1,79 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.sap.hcp.ariba.simplerequisition</groupId>
+	<artifactId>requisition-parent</artifactId>
+	<version>1.0.0</version>
+	<packaging>pom</packaging>
+	<name>Ariba Simple Requisition Extension</name>
+	
+	<organization>
+		<name>SAP AG</name>
+		<url>http://www.sap.com</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<name>SAP HANA Cloud</name>
+			<email>netweaver-cloud@sap.com</email>
+			<url>http://hana.ondemand.com</url>
+			<organization>SAP AG</organization>
+			<organizationUrl>http://www.sap.com/</organizationUrl>
+		</developer>
+	</developers>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<url>https://github.com/SAP/cloud-ariba-simple-requisition-ext</url>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<cloud.jdk.version>1.7</cloud.jdk.version>	
+		<cxf.version>2.7.11</cxf.version>
+	</properties>
+	
+	<modules>
+		<module>requisition-ariba-p2p-client</module>
+		<module>requisition-app</module>	
+	</modules>
+	
+	<build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+					<version>3.3</version>
+					<configuration>
+						<source>${cloud.jdk.version}</source>
+						<target>${cloud.jdk.version}</target>
+						<showDeprecation>false</showDeprecation>
+						<showWarnings>false</showWarnings>
+					</configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.7.7</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-jdk14</artifactId>
+				<version>1.7.7</version>
+			</dependency>			
+		</dependencies>
+	</dependencyManagement>
+	<description>A sample HCP application, demonstrating consumption of Ariba P2P API for purchase requisitions</description>
+</project>

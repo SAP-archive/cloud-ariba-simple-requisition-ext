@@ -1,4 +1,19 @@
 *.class
+<<<<<<< HEAD
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# eclipse resources
+/target/
+.classpath
+.project
+.settings
+=======
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
@@ -10,3 +25,4 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+>>>>>>> branch 'master' of ssh://git@github.wdf.sap.corp/CEIT/ariba-simple-requisition.git

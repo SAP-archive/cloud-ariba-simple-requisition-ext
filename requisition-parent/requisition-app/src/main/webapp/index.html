@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+		
+		<script id="sap-ui-bootstrap"
+			src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-xx-bindingSyntax="complex"
+			data-sap-ui-preload="async"
+			data-sap-ui-compatVersion="edge" 
+			data-sap-ui-resourceroots='{
+								"sap.ui.ariba.p2p.requisitions.wizard": "./", 
+								"sap.ui.demo.mock": "mockdata",
+								"sap.ui.demo.mocksvc": "./localService"}'>
+		</script>
+
+		
+		<!-- Application launch configuration -->
+		<script>
+		
+			sap.ui.getCore().attachInit(function() {
+				new sap.m.App ({
+				    pages: [
+				        new sap.m.Page({
+				            title: "Submit Requisitions", 
+				            enableScrolling : false,
+		  					    content: [ new sap.ui.core.ComponentContainer({
+		  						    height : "100%", name : "sap.ui.ariba.p2p.requisitions.wizard"
+		  					    })]
+		  					})
+		  				]
+				}).placeAt("content");
+			});
+
+		</script>
+		
+	</head>
+	
+	<!-- UI Content -->
+	<body class="sapUiBody" id="content" role="application"></body>
+
+</html>

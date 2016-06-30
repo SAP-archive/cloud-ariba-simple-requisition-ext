@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<Module>    
+	<ModulePrefs title="Simple Requisition" description="A simple requisition scenario">
+		<Require feature="sap-xhrwrapper"/>
+	</ModulePrefs>  
+	<Content href="index.html" type="html" view="default, authoring, consumption, mobile, preview"/> 
+</Module>
