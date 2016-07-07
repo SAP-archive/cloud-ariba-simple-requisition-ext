@@ -6,7 +6,7 @@ Prerequisites:
 1.    Eclipse installed with SAP HANA Cloud Platform Tools plugins
 2.    JDK 1.7 is available as an Installed JRE in *Windows->Preferences->Java->Installed JREs*
 3.    SAP HANA Cloud Java Web Tomcat 7 is available as a runtime environment *Windows->Preferences->Server-> Runtime Environments*
-4.    [Configured destinations for connecting to the Concur API](#configuring-destinations)
+4.    [Configured destinations for connecting to the Ariba API](#configuring-destinations)
 
 ##What is it?
 
