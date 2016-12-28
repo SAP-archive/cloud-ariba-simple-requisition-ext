@@ -5,7 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 		return UIComponent.extend("sap.ui.ariba.p2p.requisitions.wizard.Component", {
 			
 			metadata: {
-				rootView: "sap.ui.ariba.p2p.requisitions.wizard.V",
+				rootView: "sap.ui.ariba.p2p.requisitions.wizard.Requisition",
 				dependencies: {
 					libs: [
 						"sap.m",
@@ -16,8 +16,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					sample: {
 						stretch : true,
 						files: [
-							"V.view.xml",
-							"C.controller.js"
+							"Requisition.view.xml",
+							"Requisition.controller.js"
 						],
 						"contentDensities": {
 							"compact": true,

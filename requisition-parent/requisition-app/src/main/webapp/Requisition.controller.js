@@ -2,14 +2,13 @@ sap.ui.define([
    	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
-	'sap/ui/model/Filter',
 	'sap/m/MessageBox'
-], function(jQuery, Controller, JSONModel, Filter, MessageBox) {
+], function(jQuery, Controller, JSONModel, MessageBox) {
 	"use strict";
 
-	var WizardController = Controller.extend("sap.ui.ariba.p2p.requisitions.wizard.C", {
+	var WizardController = Controller.extend("sap.ui.ariba.p2p.requisitions.wizard.Requisition", {
 		
-		sSvcUrl: "/api/requisition",
+		serviceUrl: "/requisition-app/api/requisition",
 		
 		onInit: function() {
 			this._oSubmitButton = this.getView().byId("submitButton");
@@ -19,11 +18,17 @@ sap.ui.define([
 		},
 		
 		_initializeApplicationModel: function(){
+			var date = new Date();
+		    var curr_date = date.getDate();
+			var curr_month = date.getMonth() + 1; //Months are zero based
+			var curr_year = date.getFullYear();
+			var formatedDate = curr_date + "-" + curr_month + "-" + curr_year;
+
 			var oModel = new JSONModel({
 				"RequisitionHeader": {
 					  "Name": "HCP XML Req Import",
-					  "Comment": "This requisition is imported by HCP on date " + new Date(),
-					  "NeedBy": new Date(),
+					  "Comment": "This requisition is imported by HCP on date " + formatedDate,
+					  "NeedBy": date,
 					  "Requester": "hcpuser"
 					}
 			});
@@ -34,23 +39,21 @@ sap.ui.define([
 		},
 						
 		onCancel: function(){
-			this._onMessageBoxOpen("Are you sure you want to cancel your submition and loose progress?", "warning", this._initializeApplicationModel);
+			this._onMessageBoxOpen("Are you sure you want to cancel your submission?", "warning", this._initializeApplicationModel);
 		},
 		
 		onSubmit: function(evt){
-			this._onMessageBoxOpen("Are you sure you want to submit this requistion request?", "confirm", function(){
+			this._onMessageBoxOpen("Are you sure you want to submit the requistion request?", "confirm", function(){
 				
 				sap.ui.core.BusyIndicator.show(0);
 				
 				var oRequisitionHeader = this.getView().getModel().getProperty("/RequisitionHeader");
-				jQuery.post(this.sSvcUrl, JSON.stringify(oRequisitionHeader), "json")
+				jQuery.post(this.serviceUrl, JSON.stringify(oRequisitionHeader), "json")
 				.done(function(data){
-					MessageBox.information("Requistion request submitted successfully");
-				})
-				.fail(function(err){
-					MessageBox.error("Requistion request was not submitted successfully");
-				})
-				.always(jQuery.proxy(function(){
+					MessageBox.information("Requistion request submitted successfully.");
+				}).fail(function(err){
+					MessageBox.error("Requistion request was not submitted successfully.");
+				}).always(jQuery.proxy(function(){
 					this._initializeApplicationModel.apply(this);
 					sap.ui.core.BusyIndicator.hide();
 				}, this));

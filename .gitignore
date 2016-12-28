@@ -11,7 +11,6 @@ hs_err_pid*
 /target/
 .classpath
 .project
-.settings
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/

@@ -10,27 +10,77 @@
 		<version>1.0.0</version>
 	</parent>
 
+	<scm>
+		<connection>scm:git:git://github.com/SAP/cloud-ariba-p2p-requisition-client-ext.git</connection>
+		<developerConnection>scm:git:https://github.com/SAP/cloud-ariba-p2p-requisition-client-ext.git</developerConnection>
+		<url>https://github.com/SAP/cloud-ariba-p2p-requisition-client-ext</url>
+	</scm>
+
+	<properties>
+		<maven.scm.plugin.version>1.9</maven.scm.plugin.version>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-jdk14</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-frontend-jaxws</artifactId>
-			<version>${cxf.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-transports-http</artifactId>
-			<version>${cxf.version}</version>
-		</dependency>
-
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-scm-plugin</artifactId>
+				<version>${maven.scm.plugin.version}</version>
+				<configuration>
+					<goals>checkout</goals>
+					<checkoutDirectory>${project.basedir}/src/main/java</checkoutDirectory>
+					<workingDirectory>${project.basedir}/src/main/java</workingDirectory>
+					<includes>ariba/**</includes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>generated-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>checkout</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-scm-plugin</artifactId>
+										<versionRange>[1.9,)</versionRange>
+										<goals>
+											<goal>checkout</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
 </project>

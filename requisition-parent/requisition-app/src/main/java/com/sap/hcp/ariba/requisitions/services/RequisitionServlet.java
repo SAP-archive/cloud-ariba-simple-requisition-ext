@@ -3,183 +3,159 @@ package com.sap.hcp.ariba.requisitions.services;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-import javax.naming.ConfigurationException;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.servlet.ServletException;
-import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.soap.SOAPException;
 
-import org.apache.cxf.helpers.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.sap.core.connectivity.api.configuration.ConnectivityConfiguration;
-import com.sap.core.connectivity.api.configuration.DestinationConfiguration;
+import com.sap.hcp.ariba.requisitions.config.DestinationProperties;
 
-import ariba.buyer.vrealm_3.PrepareItemParameter;
-import ariba.buyer.vrealm_3.PrepareRequisitionParameter;
-import ariba.buyer.vrealm_3.RequisitionImportPullPortType_RequisitionImportPullPortType_Client;
+import ariba.buyer.requisition.Requisition;
+import ariba.buyer.requisition.RequisitionItem;
+import ariba.buyer.requisition.RequisitionSOAPClient;
 
 public class RequisitionServlet extends HttpServlet {
-	
-	private static final Logger logger = LoggerFactory.getLogger(RequisitionServlet.class);
-	
-	private ConnectivityConfiguration configuration;
-	
-	private static final String CONNECTIVITY_CONFIGURATION = "java:comp/env/connectivityConfiguration";
-	
-	private static final String API_DESTINATION = "ariba-p2p-api";
-	
+
+	private static final long serialVersionUID = 7560329682426231472L;
+
+	private static final String DEBUG_SUCCESSFULLY_SUBMITTED_A_REQUISITION_FOR_HEADER_MESSAGE = "Successfully submitted a requisition for header";
+	private static final String DEBUG_STARTING_REQUISITION_SUBMISSION_MESSAGE = "Starting requisition submission: {}";
+
+	private static final String ERROR_REQUEST_READER_PARAMETER_MUST_BE_SPECIFIED_MESSAGE = "Parameter 'requestJson' must be specified.";
+	private static final String ERROR_IN_PROCESSING_THE_REQUEST_SEE_THE_LOGS_FOR_MORE_DETAILS_MESSAGE = "Error in processing the request. See the logs for more details.";
+
+	private static final String TWO_STRINGS_FORMAT = "{0}{1}";
+	private static final Long ORIGINATING_SYSTEM_LINE_NUMBER = 1l;
+	private static final Long NUMBER_IN_COLLECTION = 1l;
+	private static final String REQUISITION_IMPORT_PULL_PATH = "/RequisitionImportPull";
+
 	private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").create();
-	
+	private static final Logger logger = LoggerFactory.getLogger(RequisitionServlet.class);
+
+	private DestinationProperties destProperties;
+
 	@Override
-	public void init() throws UnavailableException {
-		// Look up the connectivity configuration API
+	public void init() {
+		destProperties = new DestinationProperties();
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		try {
-			Context ctx = new InitialContext();
-			configuration = (ConnectivityConfiguration) ctx.lookup(CONNECTIVITY_CONFIGURATION);
-		} catch (NamingException e) {
-			logger.error("Could not lookup Connectivity Configuration [ {} ] ", CONNECTIVITY_CONFIGURATION, e);
-			throw new UnavailableException("Could not lookup Connectivity Configuration. See logs for details.");
+			String requestJson = IOUtils.toString(req.getInputStream(), Charset.defaultCharset());
+			submitRequisiton(requestJson);
+			resp.setStatus(HttpServletResponse.SC_OK);
+		} catch (SOAPException e) {
+			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					ERROR_IN_PROCESSING_THE_REQUEST_SEE_THE_LOGS_FOR_MORE_DETAILS_MESSAGE);
 		}
 
-		if (configuration == null) {
-			throw new UnavailableException("Looking up Conenctivity Configuration returned null.");
-		}
-	}
-	
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String json = IOUtils.readStringFromStream(req.getInputStream());
-		if (submitRequisition(json)) {
-			resp.setStatus(HttpServletResponse.SC_OK);
-		} else {
-			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error in processing the request. See the logs for more details.");
-		}
 	}
 
 	/**
 	 * Submits a requisition
-	 *  
-	 * @param json
-	 *            the request in JSON format, which is going to be submitted
-	 * @return true if the requisition was successfully submitted or false if an exception occurred while submitting
+	 * 
+	 * @param requestJson
+	 *            - the request as String in JSON format, which is going to be
+	 *            submitted
+	 * @throws SOAPException
+	 *             if there is problem with connection or request/response
+	 *             message
+	 * @throws MalformedURLException
+	 *             if no protocol is specified or an unknown protocol is found.
+	 * @throws IllegalArgumentException
+	 *             if parameter 'requestJson' is null
 	 */
-
-	public boolean submitRequisition(String json) {
-		
-		if (json == null) {
-			throw new IllegalArgumentException("A json parameter must be specified.");
+	private void submitRequisiton(String requestJson) throws SOAPException, MalformedURLException {
+		if (requestJson == null) {
+			logger.error(ERROR_REQUEST_READER_PARAMETER_MUST_BE_SPECIFIED_MESSAGE);
+			throw new IllegalArgumentException(ERROR_REQUEST_READER_PARAMETER_MUST_BE_SPECIFIED_MESSAGE);
 		}
-		
-		logger.info("Starting requisition submission...");
-		logger.info(json);
+		logger.debug(DEBUG_STARTING_REQUISITION_SUBMISSION_MESSAGE, requestJson);
 
-		RequisitionHeader header = gson.fromJson(json, RequisitionHeader.class);
-		
-		Map<String, String> configurationParameters = null;
-		try {
-			configurationParameters = getDestinationProperties(API_DESTINATION);
-		} catch (ConfigurationException e) {
-			throw new IllegalArgumentException("Conenctivity Configuration initialization failed.", e);
-		}
-		
-		Date needByDate = header.NeedBy;
-		String headerComment = header.Comment;
-		String headerName = header.Name;
-		String billingAddress = configurationParameters.get("billingAddress");
-		String requester = (header.Requester != null) ? header.Requester : "unknown";
-		String preparer = (header.Requester != null) ? header.Requester : configurationParameters.get("preparer");
+		RequisitionHeader requisitionHeader = gson.fromJson(requestJson, RequisitionHeader.class);
 
-		RequisitionItem[] items = header.RequisitionItems;
+		Requisition requisition = createRequisition(requisitionHeader);
 
-		PrepareRequisitionParameter reqParameter = new PrepareRequisitionParameter(
-				needByDate, configurationParameters.get("shipTo"), 
-				configurationParameters.get("businessUnit"),
-				configurationParameters.get("deliverTo"),
-				headerComment, headerName,
-				configurationParameters.get("originatingSystem"),
-				configurationParameters.get("originatingSystemId"),
-				configurationParameters.get("passwordAdapter"),
-				preparer,
-				requester,
-				configurationParameters.get("headerUniqueName"));
-		
-		List<PrepareItemParameter> prepareItems = new ArrayList<>();
-		for (RequisitionItem item : items) {
-			String commodityCode = configurationParameters.get("commodityCode");
-			String currency = configurationParameters.get("currency");
-			String description = item.Description;
-			String manPartNumber = item.ManPartNumber;
-			Double quantity = item.Quantity;
-			String supplier = item.Supplier;
-			String supplierPartNumber = item.SupplierPartNumber;
-			String unitOfMeasure = item.UnitOfMeasure;
-			String itemComment = item.Description;
-			String supplierContact = null;//"483-HQ";
-			String supplierSetId = null;//"SHARE";
-			String supplierLocation = null;//"did491-hq";
+		URL submitRequisitionEndpointUrl = new URL(
+				MessageFormat.format(TWO_STRINGS_FORMAT, destProperties.getUrl(), REQUISITION_IMPORT_PULL_PATH));
 
-			PrepareItemParameter itemParameter = new PrepareItemParameter(needByDate, reqParameter.shipTo,
-					reqParameter.deliverTo, commodityCode, billingAddress, manPartNumber, description, currency,
-					supplierPartNumber, unitOfMeasure, itemComment, supplier, supplierContact, supplierSetId,
-					supplierLocation, quantity);
-			prepareItems.add(itemParameter);
-		}
+		RequisitionSOAPClient.submit(submitRequisitionEndpointUrl, requisition, destProperties.getUser(),
+				destProperties.getPassword());
 
-		reqParameter.items = prepareItems;
-		try {
-			URL wsdlURL = new URL(configurationParameters.get("URL"));
-			StringBuilder authorization = new StringBuilder();
-			authorization.append("Basic ")
-				.append(configurationParameters.get("User"))
-				.append(":")
-				.append(configurationParameters.get("Password"));
-			RequisitionImportPullPortType_RequisitionImportPullPortType_Client
-				.submitRequisition(wsdlURL, reqParameter,
-					authorization.toString());
-		} catch (MalformedURLException | DatatypeConfigurationException e) {
-			logger.error("Exception occurred while trying to submit the requisiton", e);
-			return false;
-		}
-
-		logger.info("Successfully submitted a requisition for header");
-		return true;
+		logger.debug(DEBUG_SUCCESSFULLY_SUBMITTED_A_REQUISITION_FOR_HEADER_MESSAGE);
 	}
-	
-	
-	/**
-	 * Returns a map containing the destination properties for the given destination
-	 */
-	private Map<String, String> getDestinationProperties(String destinationName) throws ConfigurationException {
-		
-		if (configuration == null) {
-			try {
-				init();
-			} catch (UnavailableException e) {
-				throw new IllegalArgumentException("Connectivity Configuration initialization failed.", e);
-			}
-		}
-		
-		DestinationConfiguration destConfiguration = configuration.getConfiguration(destinationName);
-		if (destConfiguration == null) {
-			throw new ConfigurationException(
-					String.format("Destination [ %s ] not found. Hint: Make sure to have the destination configured.", destinationName));
-		}
-		logger.debug("Getting destination properties for destination [ {} ]", destinationName);
-		return destConfiguration.getAllProperties();
+
+	private Requisition createRequisition(RequisitionHeader header) {
+
+		Date needByDate = header.getNeedBy();
+		String headerComment = header.getComment();
+		String headerName = header.getName();
+		String billingAddress = destProperties.getBillingAddress();
+		String requester = (header.getRequester() != null) ? header.getRequester() : destProperties.getRequester();
+		String preparer = (header.getPreparer() != null) ? header.getPreparer() : destProperties.getPreparer();
+		String commonCommodityCodeDomain = destProperties.getCommonCommodityCodeDomain();
+		String commonCommodityCodeName = destProperties.getCommonCommodityCodeName();
+		Item[] items = header.getRequisitionItems();
+
+		Requisition reqParameter = new Requisition().needByDate(needByDate).shipTo(destProperties.getShipTo())
+				.businessUnit(destProperties.getBusinessUnit()).deliverTo(destProperties.getDeliverTo())
+				.headerComment(headerComment).headerName(headerName)
+				.originatingSystem(destProperties.getOriginatingSystem())
+				.originatingSystemId(destProperties.getOriginatingSystemId())
+				.passwordAdapter(destProperties.getPasswordAdapter()).preparer(preparer).requester(requester)
+				.headerUniqueName(destProperties.getHeaderUniqueName())
+				.namespaceXMLNSvariant(destProperties.getNamespaceXmlnsVariant());
+
+		List<RequisitionItem> prepareItems = createRequisitionItems(items, needByDate, reqParameter.getShipTo(),
+				reqParameter.getDeliverTo(), billingAddress, commonCommodityCodeDomain, commonCommodityCodeName);
+
+		reqParameter.items(prepareItems);
+
+		return reqParameter;
 	}
-	
+
+	private List<RequisitionItem> createRequisitionItems(Item[] items, Date needByDate, String shipTo, String deliverTo,
+			String billingAddress, String commonCommodityCodeDomain, String commonCommodityCodeName) {
+		List<RequisitionItem> requisitionItems = new ArrayList<>();
+
+		for (Item item : items) {
+			String commodityCode = item.getCommodityCode();
+			String currency = item.getCurrency();
+			String description = item.getDescription();
+			String manPartNumber = item.getManPartNumber();
+			Double quantity = item.getQuantity();
+			String supplier = item.getSupplier();
+			String supplierPartNumber = item.getSupplierPartNumber();
+			String unitOfMeasure = item.getUnitOfMeasure();
+			String itemComment = item.getDescription();
+			Double itemPrice = item.getPrice();
+
+			RequisitionItem requisitionItem = new RequisitionItem().needByDate(needByDate).shipTo(shipTo)
+					.deliverTo(deliverTo).commodityCode(commodityCode).billingAddress(billingAddress)
+					.manPartNumber(manPartNumber).description(description).currency(currency)
+					.supplierPartNumber(supplierPartNumber).unitOfMeasure(unitOfMeasure).itemComment(itemComment)
+					.supplierName(supplier).quantity(quantity).itemPrice(itemPrice)
+					.numberInCollection(NUMBER_IN_COLLECTION)
+					.originatingSystemLineNumber(ORIGINATING_SYSTEM_LINE_NUMBER)
+					.commonCommodityCodeDomain(commonCommodityCodeDomain)
+					.commonCommodityCodeName(commonCommodityCodeName);
+			requisitionItems.add(requisitionItem);
+		}
+
+		return requisitionItems;
+	}
+
 }

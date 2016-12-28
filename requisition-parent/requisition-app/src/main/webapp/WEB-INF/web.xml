@@ -3,7 +3,7 @@
 	xmlns="http://java.sun.com/xml/ns/javaee"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	version="3.0">
-	<display-name>com.sap.hana.cloud.sample.payroll</display-name>
+	<display-name>com.sap.hana.cloud.simple.requsition</display-name>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
@@ -19,16 +19,4 @@
 		<servlet-name>RequisitionServlet</servlet-name>
 		<url-pattern>/api/requisition</url-pattern>
 	</servlet-mapping>
-<!-- 	<login-config>
-		<auth-method>FORM</auth-method>
-	</login-config>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>OData API</web-resource-name>
-			<url-pattern>/*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>Everyone</role-name>
-		</auth-constraint>
-	</security-constraint> -->
 </web-app>

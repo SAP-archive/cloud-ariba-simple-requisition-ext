@@ -1,6 +1,6 @@
 <mvc:View
 		height="100%"
-		controllerName="sap.ui.ariba.p2p.requisitions.wizard.C"
+		controllerName="sap.ui.ariba.p2p.requisitions.wizard.Requisition"
 		xmlns:l="sap.ui.layout"
 		xmlns:f="sap.ui.layout.form"
 		xmlns:core="sap.ui.core"

@@ -1,78 +1,77 @@
-# Ariba Simple Requisition Sample
+# Ariba Simple Requisition
 
-Prerequisites:
---------------
+## Introduction
 
-1.    Eclipse installed with SAP HANA Cloud Platform Tools plugins
-2.    JDK 1.7 is available as an Installed JRE in *Windows->Preferences->Java->Installed JREs*
-3.    SAP HANA Cloud Java Web Tomcat 7 is available as a runtime environment *Windows->Preferences->Server-> Runtime Environments*
-4.    [Configured destinations for connecting to the Ariba API](#configuring-destinations)
+This is an SAP HANA Cloud Platform Web application that demonstrates the consumption of Ariba P2P API for purchasing requisitions.
 
-##What is it?
+## Prerequisites
 
-This is a sample HCP application, demonstrating consumption of Ariba P2P API for purchase requisitions.
+1.    Eclipse installed with SAP HANA Cloud Platform Tools plugins.
+2.    JDK 1.7 set as an Installed JRE in Eclipse: *Preferences > Java > Installed JREs*.
+3.    Java Web Tomcat 7 or Java Web Tomcat 8 set as a runtime environment in Eclipse: *Preferences > Server > Runtime Environments*.
+4.    [Destinations configured for connecting to the Ariba API](#configure-the-destinations).
 
-## How to run it?
+## Build and Deploy the Application
 
-Step 1: Clone the Git repository
+1. Clone the Git repository.
+2. Import the project as a Maven project into your Eclipse workspace. 
+>*Note*: Make sure you use JDK 1.7 for this project. You can configure this in the project build path.
+3. Run the *requisition-parent* project with Maven goal `clean install`. 
+4. If you are deploying the application locally, see [Creating and Deleting Destinations Locally](https://help.hana.ondemand.com/help/frameset.htm?7fa92ffa007346f58491999361928303.html).<br>
+If you are deploying it on the Cloud, see [Creating and Deleting Destinations on the Cloud](https://help.hana.ondemand.com/help/frameset.htm?94dddf7d9e56401ba1719b7e836d8ee9.html).
+5. Deploy the application. 
+>*Note*: Make sure you select the Java Web Tomcat 7 or Java Web Tomcat 8 as a runtime environment.
+6. To access the application, follow the steps described in the [Access the application](#access-the-application) section.
 
-Step 2: Import the project as a Maven project into your eclipse workspace. 
-*Note - Make sure the project uses JDK 1.7. This can be configured in the project build path*
+## Configure the Destination
 
-Step 3: Run Maven goal `clean install` 
+You need to configure an HTTP Connectivity Destination for the Ariba P2P API before running the project.
+>*Note*: To learn more about how to configure the destination, see [SAP HANA Cloud Platform Destinations Documentation] (https://help.hana.ondemand.com/help/frameset.htm?e4f1d97cbb571014a247d10f9f9a685d.html).
 
-Step 4: If you are deploying locally then see [Creating and Deleting Destinations Locally](https://help.hana.ondemand.com/help/frameset.htm?7fa92ffa007346f58491999361928303.html).<br>
-If you are deploying on the Cloud see [Creating and Deleting Destinations on the Cloud](https://help.hana.ondemand.com/help/frameset.htm?94dddf7d9e56401ba1719b7e836d8ee9.html).
-
-Step 5: Build and deploy your application. **Make sure you selected the SAP HANA Cloud Java Web Tomcat 7 as the runtime environment**
-
-
-## <a name="configuring-destinations"></a> Configuring Destinations
-The sample uses one HTTP Connectivity Destination for the Ariba P2P API.
-Prior to running the project you must have the destination configured as described in the [SAP HANA Cloud Platform Destinations Documentation] (https://help.hana.ondemand.com/help/frameset.htm?e4f1d97cbb571014a247d10f9f9a685d.html)
-
-The HTTP API Destination should look like this:
-
+The HTTP API Destination looks like this:
 
 	Name=ariba-p2p-api
 	Description=Ariba P2P SOAP WS API Destination
 	Type=HTTP
-	URL=https\://<ariba host>/Buyer/soap/salesdemo/RequisitionImportPull?wsdl
+	URL=https\://<Ariba instance>/Buyer/soap/<Ariba realm>
 	User=<endpoint-user>
 	Password=<endpoint-password>
 	Authentication=BasicAuthentication
 	ProxyType=Internet
-	TrustAll=true
-	CloudConnectorVersion=2
 	deliverTo=<deliver to name>
 	headerUniqueName=<header>
 	shipTo=<shipping address>
 	billingAddress=<billing address>
-	currency=<default currency>
 	originatingSystem=<originating system>
 	passwordAdapter=PasswordAdapter1
 	preparer=<preparer user>
+	requester=<requester user>
 	originatingSystemId=<system id>
 	businessUnit=<business unit>
-	commodityCode=<standard commodity code>
+	CommonCommodityCodeDomain=<common commodity code domain>
+	CommonCommodityCodeName=<common commodity code name>
+	requisitionComment=<comment for requisition>
+	requisitionName=<requisition name>
+	namespaceXMLNSvariant=<namespace XMLNS variant>
 
+## Access the application
 
-## Accessing the application
-After deployment the application is accessible on the following URL:
-`http(s)://<host>:<port>/`
+If you deploy the application on the cloud, this is the URL pattern that you use to access it: `http://<application><account>.<domain>/requisition-app/`
 
-You should see kiosk-like user interface with a list of products presented as tiles that can be selected by clicking/touching the tiles to choose number of the the given product items.
+If you run the application locally, then use this URL pattern: `http://<host>:<port>/requisition-app/`.
 
-## Resources
+You should see a kiosk-like user interface with a list of products presented as tiles. 
 
-* SAP HANA Cloud Documentation - https://help.hana.ondemand.com/
+To choose the amount of a given product item that you want to order, select or touch (depending on the device) the respective tile.
+
+* SAP HANA Cloud Platform Documentation - https://help.hana.ondemand.com/
 
 ## Copyright and license
 
-Copyright 2015 SAP AG
+Copyright 2016 SAP SE
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this work except in compliance with the License. You may obtain a copy of the License in the LICENSE file, or at:
 
-http://www.apache.org/licenses/LICENSE-2.0
+	http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
