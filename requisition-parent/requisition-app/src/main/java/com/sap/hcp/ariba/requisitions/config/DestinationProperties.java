@@ -36,9 +36,7 @@ public class DestinationProperties {
 	 * Constructor for DestinationProperties
 	 */
 	public DestinationProperties() {
-		if (connectivityConfiguration == null) {
-			connectivityConfiguration = new DestinationUtils();
-		}
+		connectivityConfiguration = new DestinationUtils();
 	}
 
 	/**
