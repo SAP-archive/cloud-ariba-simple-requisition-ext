@@ -47,13 +47,9 @@ public class RequisitionServlet extends HttpServlet {
 	private DestinationProperties destProperties;
 
 	@Override
-	public void init() {
-		destProperties = new DestinationProperties();
-	}
-
-	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		try {
+			destProperties = new DestinationProperties();
 			String requestJson = IOUtils.toString(req.getInputStream(), Charset.defaultCharset());
 			submitRequisiton(requestJson);
 			resp.setStatus(HttpServletResponse.SC_OK);
