@@ -110,7 +110,7 @@ public class RequisitionServlet extends HttpServlet {
 				.businessUnit(destProperties.getBusinessUnit()).deliverTo(destProperties.getDeliverTo())
 				.headerComment(headerComment).headerName(headerName)
 				.originatingSystem(destProperties.getOriginatingSystem())
-				.originatingSystemId(destProperties.getOriginatingSystemId())
+				.originatingSystemReferenceId(String.valueOf(System.currentTimeMillis()))
 				.passwordAdapter(destProperties.getPasswordAdapter()).preparer(preparer).requester(requester)
 				.headerUniqueName(destProperties.getHeaderUniqueName())
 				.namespaceXMLNSvariant(destProperties.getNamespaceXmlnsVariant());
