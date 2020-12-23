@@ -1,5 +1,7 @@
 # Ariba Simple Requisition
 
+[![REUSE status](https://api.reuse.software/badge/github.com/SAP-samples/cloud-ariba-simple-requisition-ext)](https://api.reuse.software/info/github.com/SAP-samples/cloud-ariba-simple-requisition-ext)
+
 ## Introduction
 
 This is an SAP HANA Cloud Platform Web application that demonstrates the consumption of Ariba P2P API for purchasing requisitions.
